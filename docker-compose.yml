@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  taavi:
+    image: taavi
+    container_name: taavi
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: on-failure
+    environment:
+      - DISCORD_TOKEN=$DISCORD_TOKEN

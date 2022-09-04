@@ -1,47 +1,72 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/robfig/cron/v3"
+	"gorm.io/gorm"
+	"kerdo.dev/taavi/zlp"
 )
 
 type Taavi struct {
-	bot *discordgo.Session
+	bot *zlp.Bot
+	db  *gorm.DB
+
+	scheduler         *cron.Cron
+	mainSchedulerTask cron.EntryID
 
 	keepAlive chan os.Signal
+	server    *runtime.ServeMux
 }
 
 func NewTaavi() *Taavi {
-	token := os.Getenv("DISCORD_TOKEN")
-	if token == "" {
-		log.Fatal("Discord token is not defined")
-	}
-
-	bot, err := discordgo.New("Bot " + token)
+	rc, err := zlp.LoadRC(".zuliprc")
 	if err != nil {
-		log.Fatalf("Could not create new bot: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Could not load ZulipRC file: %v\n", err)
+		os.Exit(1)
 	}
+	bot := zlp.NewBot(rc)
+	bot.Init()
 
 	return &Taavi{
-		bot:       bot,
-		keepAlive: make(chan os.Signal, 1),
+		bot:               bot,
+		scheduler:         cron.New(),
+		mainSchedulerTask: -1,
+		keepAlive:         make(chan os.Signal, 1),
 	}
 }
 
 func (t *Taavi) Start() {
-	err := t.bot.Open()
+	t.setupDb()
+
+	var err error
+	t.CronSync(true)
+	t.mainSchedulerTask, err = t.scheduler.AddFunc("@every 5s", func() {
+		t.CronSync(true)
+	})
 	if err != nil {
-		log.Fatalf("Could not open bot: %s\n", err)
+		log.Fatalf("Could not start main job scheduler: %v\n", err)
 	}
+	go t.scheduler.Run()
+	go t.runGRPC()
 
 	log.Print("Tiiger Taavi is now up!")
 
 	signal.Notify(t.keepAlive, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-t.keepAlive
+
+	ForEach(t.scheduler.Entries(), func(entry cron.Entry) {
+		t.scheduler.Remove(entry.ID)
+	})
+	ctx := t.scheduler.Stop()
+	<-ctx.Done()
+
+	// TODO: Stop gRPC HTTP server
 
 	log.Print("Tiiger Taavi is now shutting down.")
 }

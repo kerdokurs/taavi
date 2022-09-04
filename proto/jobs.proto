@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+option go_package = "./pb";
+package api;
+
+service JobService {
+  rpc CreateNewJob(NewJobRequest) returns (JobResponse) {
+    option (google.api.http) = {
+      post: "/v1/jobs",
+      body: "*",
+    };
+  };
+  rpc GetAllJobs(AllJobsRequest) returns (AllJobsResponse) {
+    option (google.api.http) = {
+      get: "/v1/jobs",
+    };
+  };
+  rpc CronSync(Empty) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v1/cron_sync",
+      body: "*",
+    };
+  }
+}
+
+message NewJobRequest {
+  string cronTime = 1;
+  int32 type = 2;
+  string serverId = 3;
+  string channelId = 4;
+  string message = 5;
+}
+
+message JobResponse {
+  int32 id = 1;
+  string cronTime = 2;
+  int32 type = 3;
+  int32 nextScheduleTime = 4;
+  string serverId = 5;
+  string channelId = 6;
+  string message = 7;
+}
+
+message AllJobsRequest {
+}
+
+message AllJobsResponse {
+  repeated JobResponse jobs = 1;
+}
+
+message Empty {
+}

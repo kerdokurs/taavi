@@ -1,19 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/robfig/cron/v3"
+	"kerdo.dev/taavi/zlp"
 )
 
 type Job struct {
 	Id    uuid.UUID
 	Taavi *Taavi
 
-	ServerId  string
-	ChannelId string
+	StreamId string
+	TopicId  string
 }
 
 type MessageJob struct {
@@ -22,70 +24,112 @@ type MessageJob struct {
 }
 
 func (m MessageJob) Run() {
-	log.Printf("Running job with message: %s\n", m.Message)
-	// _, err := m.Taavi.bot.ChannelMessageSend(m.ChannelId, m.Message)
-	// if err != nil {
-	// 	log.Printf("Error sending message for job %s: %v\n", m.Id.String(), err)
-	// }
+	message := zlp.Message{
+		Stream:  m.StreamId,
+		Topic:   m.TopicId,
+		Content: m.Message,
+	}
+	_, err := m.Taavi.bot.Message(&message)
+	if err != nil {
+		log.Printf("Error sending message: %v\n", err)
+	}
 }
 
 func (t *Taavi) CronSync(initial bool) {
-	if initial && t.mainSchedulerTask == -1 {
-		// The first initial setup
-		entries := t.scheduler.Entries()
-
-		for _, entry := range entries {
-			if entry.ID == t.mainSchedulerTask {
-				continue
-			}
-
-			t.scheduler.Remove(entry.ID)
-		}
-	}
-
-	var jobInfos []CronInfo
+	// If the bot has just started (meaning initial == true),
+	// we shall cancel ALL currently queued tasks except the main scheduler.
 	if initial {
-		t.db.Find(&jobInfos)
-	} else {
-		t.db.Where("scheduled_at < updated_at").Find(&jobInfos)
+		t.deleteAllExceptMain()
 	}
 
+	jobInfos, err := t.getTodaysJobs()
+	if err != nil {
+		log.Printf("Error loading today's jobs: %v\n", err)
+		return
+	}
+
+	// Starting all jobs based on their infos
 	for _, info := range jobInfos {
-		sid, err := uuid.NewUUID()
-		if err != nil {
-			log.Printf("Error creating new UUID for job %d: %v\n", info.ID, err)
-			continue
+		if err := t.ScheduleJob(&info); err != nil {
+			log.Printf("Error scheduling job: %v\n", err)
 		}
-
-		var job cron.Job
-		switch info.Type {
-		case Message:
-			job = MessageJob{
-				Job: Job{
-					Id:        sid,
-					Taavi:     t,
-					ServerId:  info.ServerId,
-					ChannelId: info.ChannelId,
-				},
-				Message: info.Message,
-			}
-		default:
-			log.Printf("Unsupported job type: %d\n", info.Type)
-		}
-
-		id, err := t.scheduler.AddJob(info.TimeString, job)
-		if err != nil {
-			log.Printf("Could not start job with id %d: %v\n", info.ID, err)
-			continue
-		}
-
-		info.SchedulerId = int(id)
-		info.ScheduleId = sid
-		info.ScheduledAt = time.Now()
-		t.db.Save(&info)
 	}
+}
+
+func (t *Taavi) ScheduleJob(info *CronInfo) error {
+	// UUID used to cancel the job after it's done
+	taskUid, _ := uuid.NewUUID()
+
+	var job cron.Job
+	switch info.Type {
+	case Message:
+		job = MessageJob{
+			Job: Job{
+				Id:       taskUid,
+				Taavi:    t,
+				StreamId: info.StreamId,
+				TopicId:  info.TopicId,
+			},
+			Message: info.Message,
+		}
+	default:
+		return fmt.Errorf("unsupported job type")
+	}
+
+	id, err := t.scheduler.AddJob(info.TimeString, job)
+	if err != nil {
+		return err
+	}
+
+	info.SchedulerId = int(id)
+	info.ScheduleId = taskUid
+	info.ScheduledAt = time.Now()
+	t.db.Save(info)
+
+	return nil
 }
 
 func (t *Taavi) ScheduledJobs() []cron.Entry {
 	return t.scheduler.Entries()
+}
+
+func (t *Taavi) deleteAllExceptMain() {
+	entries := t.scheduler.Entries()
+
+	for _, entry := range entries {
+		if entry.ID == t.mainSchedulerTask {
+			continue
+		}
+
+		t.scheduler.Remove(entry.ID)
+	}
+}
+
+func (t *Taavi) cancelByUUID(id uuid.UUID) error {
+	info := CronInfo{
+		ScheduleId: id,
+	}
+	tx := t.db.Find(&info)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	t.scheduler.Remove(cron.EntryID(info.SchedulerId))
+	info.SchedulerId = -1
+	t.db.Save(&info)
+
+	return nil
+}
+
+func (t *Taavi) getTodaysJobs() ([]CronInfo, error) {
+	var allInfos []CronInfo
+	if tx := t.db.Find(&allInfos); tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	// TODO: Pick out today's jobs
+	jobs := make([]CronInfo, len(allInfos))
+	copy(jobs, allInfos)
+
+	return jobs, nil
 }

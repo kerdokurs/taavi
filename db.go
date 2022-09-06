@@ -37,8 +37,8 @@ type CronInfo struct {
 	SchedulerId int
 	ScheduleId  uuid.UUID
 
-	ServerId  string
-	ChannelId string
+	StreamId string
+	TopicId  string
 
 	Message string
 }

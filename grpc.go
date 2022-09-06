@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -51,8 +52,8 @@ func (j *JobServer) CreateNewJob(ctx context.Context, request *pb.NewJobRequest)
 	info := CronInfo{
 		TimeString: request.CronTime,
 		Type:       CronType(request.Type),
-		ServerId:   request.ServerId,
-		ChannelId:  request.ChannelId,
+		StreamId:   request.StreamId,
+		TopicId:    request.TopicId,
 		Message:    request.Message,
 	}
 	tx := j.Taavi.db.Create(&info)
@@ -65,8 +66,8 @@ func (j *JobServer) CreateNewJob(ctx context.Context, request *pb.NewJobRequest)
 		CronTime:         info.TimeString,
 		Type:             int32(info.Type),
 		NextScheduleTime: int32(info.ScheduledAt.UnixMilli()),
-		ServerId:         info.ServerId,
-		ChannelId:        info.ChannelId,
+		StreamId:         info.StreamId,
+		TopicId:          info.TopicId,
 		Message:          info.Message,
 	}, nil
 }
@@ -85,8 +86,8 @@ func (j *JobServer) GetAllJobs(ctx context.Context, request *pb.AllJobsRequest) 
 				CronTime:         info.TimeString,
 				Type:             int32(info.Type),
 				NextScheduleTime: int32(info.ScheduledAt.UnixMilli()),
-				ServerId:         info.ServerId,
-				ChannelId:        info.ChannelId,
+				StreamId:         info.StreamId,
+				TopicId:          info.TopicId,
 				Message:          info.Message,
 			}
 		}),
@@ -95,5 +96,35 @@ func (j *JobServer) GetAllJobs(ctx context.Context, request *pb.AllJobsRequest) 
 
 func (j *JobServer) CronSync(ctx context.Context, request *pb.Empty) (*pb.Empty, error) {
 	j.Taavi.CronSync(false)
+	return &pb.Empty{}, nil
+}
+
+func (j *JobServer) GetScheduledJobs(ctx context.Context, req *pb.Empty) (*pb.AllJobsResponse, error) {
+	jobs := j.Taavi.ScheduledJobs()
+	fmt.Println(jobs)
+	fmt.Println(len(jobs))
+	return &pb.AllJobsResponse{}, nil
+}
+
+func (j *JobServer) DeleteJob(ctx context.Context, req *pb.JobIdRequest) (*pb.Empty, error) {
+	id := int(req.Id)
+	if id == 0 {
+		return nil, fmt.Errorf("invalid id")
+	}
+
+	info := CronInfo{
+		SchedulerId: id,
+	}
+	if tx := j.Taavi.db.Find(&info); tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	if err := j.Taavi.cancelByUUID(info.ScheduleId); err != nil {
+		return nil, err
+	}
+	if tx := j.Taavi.db.Delete(&info); tx.Error != nil {
+		return nil, tx.Error
+	}
+
 	return &pb.Empty{}, nil
 }

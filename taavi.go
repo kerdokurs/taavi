@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 	"kerdo.dev/taavi/zlp"
@@ -21,10 +20,10 @@ type Taavi struct {
 	mainSchedulerTask cron.EntryID
 
 	keepAlive chan os.Signal
-	server    *runtime.ServeMux
 }
 
 func NewTaavi() *Taavi {
+	// Connection with Zulip
 	rc, err := zlp.LoadRC(".zuliprc")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not load ZulipRC file: %v\n", err)
@@ -44,15 +43,17 @@ func NewTaavi() *Taavi {
 func (t *Taavi) Start() {
 	t.setupDb()
 
-	var err error
+	// Sync up CRON
 	t.CronSync(true)
-	t.mainSchedulerTask, err = t.scheduler.AddFunc("@every 5s", func() {
-		t.CronSync(true)
-	})
-	if err != nil {
-		log.Fatalf("Could not start main job scheduler: %v\n", err)
-	}
 	go t.scheduler.Run()
+
+	// Main task scheduler is the task that starts up each day's tasks at midnight
+	// t.mainSchedulerTask, err = t.scheduler.AddFunc("@every 5s", func() {
+	// 	t.CronSync(true)
+	// })
+	// if err != nil {
+	// 	log.Fatalf("Could not start main job scheduler: %v\n", err)
+	// }
 	go t.runGRPC()
 
 	log.Print("Tiiger Taavi is now up!")

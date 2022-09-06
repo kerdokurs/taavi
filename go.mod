@@ -1,4 +1,4 @@
-module kerdo.dev/taavi
+module taavi
 
 go 1.18
 

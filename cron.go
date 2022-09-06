@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"taavi/zlp"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/robfig/cron/v3"
-	"kerdo.dev/taavi/zlp"
 )
 
 type Job struct {

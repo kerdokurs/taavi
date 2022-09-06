@@ -6,10 +6,10 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"taavi/zlp"
 
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
-	"kerdo.dev/taavi/zlp"
 )
 
 type Taavi struct {

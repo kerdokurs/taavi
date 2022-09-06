@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	pb "kerdo.dev/taavi/pkg"
+	pb "taavi/pkg"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"

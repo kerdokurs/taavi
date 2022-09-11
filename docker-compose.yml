@@ -8,5 +8,3 @@ services:
       context: ./
       dockerfile: Dockerfile
     restart: on-failure
-    environment:
-      - DISCORD_TOKEN=$DISCORD_TOKEN

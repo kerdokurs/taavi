@@ -1,24 +1,83 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"time"
 
-	"github.com/google/uuid"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"cloud.google.com/go/firestore"
+	firebase "firebase.google.com/go/v4"
+	"github.com/robfig/cron/v3"
+	"google.golang.org/api/option"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-const databasePath = "test.db"
+type DatabaseService struct {
+	db            *firestore.Client
+	stopListening context.CancelFunc
+}
 
-func (t *Taavi) setupDb() {
-	var err error
-	t.db, err = gorm.Open(sqlite.Open(databasePath), &gorm.Config{})
+func (ds *DatabaseService) Init() {
+	ctx := context.Background()
+	opt := option.WithCredentialsFile("firebase_creds.json")
+	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
-		log.Fatalf("Could not open database %s: %v\n", databasePath, err)
+		log.Fatalf("Could not create Firebase app: %v\n", err)
+	}
+	ds.db, err = app.Firestore(ctx)
+	if err != nil {
+		log.Fatalf("Could not create Firestore client: %v\n", err)
 	}
 
-	t.db.AutoMigrate(&CronInfo{})
+	ds.setup()
+}
+
+func (ds *DatabaseService) Stop() {
+	ds.stopListening()
+	ds.db.Close()
+}
+
+func (ds *DatabaseService) setup() {
+	var ctx context.Context
+	ctx, ds.stopListening = context.WithCancel(context.Background())
+
+	// Cron Info
+	go ds.setupInfos(ctx)
+
+	fmt.Println("All database hooks are set up!")
+}
+
+func (ds *DatabaseService) setupInfos(ctx context.Context) {
+	it := ds.db.Collection("jobs").Snapshots(ctx)
+	for {
+		snap, err := it.Next()
+		if status.Code(err) == codes.DeadlineExceeded {
+			log.Printf("[CronInfo Snapshot] cancelled: %v\n", err)
+			return
+		}
+
+		if err != nil {
+			log.Printf("[CronInfo Snapshot] error: %v\n", err)
+			continue
+		}
+
+		fmt.Printf("[CronInfo Snapshot] Update\n")
+
+		docs, err := snap.Documents.GetAll()
+		if err != nil {
+			log.Printf("Could not get all documents: %v\n", err)
+			continue
+		}
+
+		infos := make([]CronInfo, len(docs))
+		for i, doc := range docs {
+			doc.DataTo(&infos[i])
+			infos[i].Id = doc.Ref.ID
+		}
+		cronInfos.Set(infos)
+	}
 }
 
 type CronType int
@@ -28,17 +87,24 @@ const (
 )
 
 type CronInfo struct {
-	gorm.Model
+	Id   string   `json:"id" firestore:"id"`
+	Type CronType `json:"type" firestore:"type"`
 
-	TimeString string
-	Type       CronType
+	CronTime string `json:"cron_time" firestore:"cron_time"`
 
-	ScheduledAt time.Time
-	SchedulerId int
-	ScheduleId  uuid.UUID
+	StreamId string   `json:"stream_id" firestore:"stream_id"`
+	TopicId  string   `json:"topic_id" firestore:"topic_id"`
+	Emails   []string `json:"emails" firestore:"emails"` // Used for private messages
 
-	StreamId string
-	TopicId  string
+	Content string `json:"content" firestore:"content"`
 
-	Message string
+	Enabled bool `json:"enabled" firestore:"enabled"`
+
+	CreatedAt time.Time `json:"created_at" firestore:"created_at,serverTimestamp"`
+
+	EntryId cron.EntryID
+}
+
+func (ci *CronInfo) Changed(other *CronInfo) bool {
+	return ci.Type != other.Type || ci.CronTime != other.CronTime || ci.StreamId != other.StreamId || ci.TopicId != other.TopicId || SliceEq(ci.Emails, other.Emails)
 }

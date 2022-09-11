@@ -81,3 +81,20 @@ func (b *Bot) getResponseData(method, endpoint string, body *url.Values) ([]byte
 	defer resp.Body.Close()
 	return ioutil.ReadAll(resp.Body)
 }
+
+func (b *Bot) respToError(resp *http.Response) error {
+	var codeType = resp.StatusCode / 100
+
+	if codeType == 2 {
+		// 2xx
+		return nil
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(body))
+
+	return fmt.Errorf(resp.Status)
+}

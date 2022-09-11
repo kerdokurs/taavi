@@ -15,3 +15,17 @@ func Map[T, U any](ts []T, mapper func(t T) U) []U {
 
 	return us
 }
+
+func SliceEq[T comparable](as, bs []T) bool {
+	if len(as) != len(bs) {
+		return false
+	}
+
+	for i, a := range as {
+		if bs[i] != a {
+			return false
+		}
+	}
+
+	return true
+}

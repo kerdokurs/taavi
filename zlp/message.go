@@ -14,9 +14,9 @@ type Message struct {
 	Content string
 }
 
-func (b *Bot) Message(m *Message) (*http.Response, error) {
+func (b *Bot) Message(m *Message) error {
 	if m.Content == "" {
-		return nil, fmt.Errorf("message content cannot be empty")
+		return fmt.Errorf("message content cannot be empty")
 	}
 
 	if len(m.Emails) > 0 {
@@ -24,29 +24,37 @@ func (b *Bot) Message(m *Message) (*http.Response, error) {
 	}
 
 	if m.Stream == "" {
-		return nil, fmt.Errorf("message stream cannot be empty")
+		return fmt.Errorf("message stream cannot be empty")
 	}
 
 	if m.Topic == "" {
-		return nil, fmt.Errorf("message topic cannot be empty")
+		return fmt.Errorf("message topic cannot be empty")
 	}
 
 	req, err := b.constructMessageRequest(m)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return b.Client.Do(req)
+	resp, err := b.Client.Do(req)
+	if err != nil {
+		return err
+	}
+	return b.respToError(resp)
 }
 
-func (b *Bot) PrivateMessage(m *Message) (*http.Response, error) {
+func (b *Bot) PrivateMessage(m *Message) error {
 	if len(m.Emails) == 0 {
-		return nil, fmt.Errorf("private message must contain atleast one recipient")
+		return fmt.Errorf("private message must contain atleast one recipient")
 	}
 	req, err := b.constructMessageRequest(m)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return b.Client.Do(req)
+	resp, err := b.Client.Do(req)
+	if err != nil {
+		return err
+	}
+	return b.respToError(resp)
 }
 
 func (b *Bot) constructMessageRequest(m *Message) (*http.Request, error) {

@@ -29,10 +29,6 @@ type Doer interface {
 }
 
 func (b *Bot) Init() {
-	b.Email = "taavi-test-bot@se-22.zulip.cs.ut.ee"
-	b.Key = "V1FY7ESgEIOpndh04IPNbr6kCgbKLzdC"
-	b.ApiUrl = "https://se-22.zulip.cs.ut.ee"
-
 	b.Client = &http.Client{}
 	if b.ApiVersion == "" {
 		b.ApiVersion = DefaultApiVersion

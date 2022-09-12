@@ -5,6 +5,11 @@ steps:
       - '-t'
       - europe-north1-docker.pkg.dev/taavi-bot/taavi
       - .
+    env:
+      - ENV=prod
+      - ZULIP_EMAIL=_ZULIP_EMAIL
+      - ZULIP_APIKEY=_ZULIP_APIKEY
+      - ZULIP_APIURL=_ZULIP_APIURL
   - name: gcr.io/cloud-builders/docker
     args:
       - push

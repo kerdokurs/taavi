@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 	"taavi/zlp"
+	"time"
 
 	"github.com/robfig/cron/v3"
 )
@@ -54,7 +55,12 @@ type CronService struct {
 func (cs *CronService) Init() {
 	cronInfos.Subscribe(cs)
 
-	cs.scheduler = cron.New()
+	loc, err := time.LoadLocation("Europe/Tallinn")
+	if err != nil {
+		log.Fatalf("Error loading timezone: %v\n", err)
+	}
+
+	cs.scheduler = cron.New(cron.WithLocation(loc))
 	cs.scheduler.Start()
 }
 

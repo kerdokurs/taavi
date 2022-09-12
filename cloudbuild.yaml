@@ -3,7 +3,7 @@ steps:
     args:
       - build
       - '-t'
-      - europe-north1-docker.pkg.dev/taavi-bot/taavi
+      - europe-north1-docker.pkg.dev/taavi-bot/taavi/taavi
       - .
     env:
       - ENV=prod
@@ -13,4 +13,4 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - europe-north1-docker.pkg.dev/taavi-bot/taavi
+      - europe-north1-docker.pkg.dev/taavi-bot/taavi/taavi

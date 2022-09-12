@@ -68,3 +68,13 @@ func splitter(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	}
 	return
 }
+
+func RCFromEnv() (*ZulipRC, error) {
+	rc := ZulipRC{
+		Email:  os.Getenv("ZULIP_EMAIL"),
+		APIKey: os.Getenv("ZULIP_APIKEY"),
+		APIUrl: os.Getenv("ZULIP_APIURL"),
+	}
+
+	return &rc, nil
+}

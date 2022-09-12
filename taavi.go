@@ -19,7 +19,13 @@ type Taavi struct {
 
 func NewTaavi() *Taavi {
 	// Connection with Zulip
-	rc, err := zlp.LoadRC(".zuliprc")
+	var rc *zlp.ZulipRC
+	var err error
+	if os.Getenv("ENV") == "prod" {
+		rc, err = zlp.RCFromEnv()
+	} else {
+		rc, err = zlp.LoadRC(".zuliprc")
+	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not load ZulipRC file: %v\n", err)
 		os.Exit(1)

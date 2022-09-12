@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -21,8 +22,14 @@ type DatabaseService struct {
 
 func (ds *DatabaseService) Init() {
 	ctx := context.Background()
-	opt := option.WithCredentialsFile("firebase_creds.json")
-	app, err := firebase.NewApp(ctx, nil, opt)
+	var app *firebase.App
+	var err error
+	if os.Getenv("ENV") != "prod" {
+		opt := option.WithCredentialsFile("firebase_creds.json")
+		app, err = firebase.NewApp(context.Background(), nil, opt)
+	} else {
+		app, err = firebase.NewApp(context.Background(), nil)
+	}
 	if err != nil {
 		log.Fatalf("Could not create Firebase app: %v\n", err)
 	}

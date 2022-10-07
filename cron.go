@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"taavi/zlp"
 	"time"
 
+	"github.com/kerdokurs/zlp"
 	"github.com/robfig/cron/v3"
 )
 

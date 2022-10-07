@@ -6,7 +6,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"taavi/zlp"
+
+	"github.com/kerdokurs/zlp"
 )
 
 type Taavi struct {

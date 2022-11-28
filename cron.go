@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -11,7 +12,42 @@ import (
 )
 
 type Job struct {
-	Bot *zlp.Bot
+	Bot   *zlp.Bot
+	Taavi *Taavi
+}
+
+type UpdateUrlJob struct {
+	Job
+
+	StreamId string
+	TopicId  string
+	Emails   []string
+	Content  string
+	Url      string
+}
+
+func (uj UpdateUrlJob) Run() {
+	dayNr := time.Now().Day()
+	// current format with advent of code url (https://adventofcode.com/2021/day/<current day>)
+	mesContent := uj.Content + uj.Url + strconv.Itoa(dayNr)
+	message := zlp.Message{
+		Stream:  uj.StreamId,
+		Topic:   uj.TopicId,
+		Content: mesContent,
+		Emails:  uj.Emails,
+	}
+	err := uj.Bot.Message(&message)
+	if err != nil {
+		log.Printf("Error sending message: #{err}\n")
+		return
+	}
+	to := ""
+	if len(uj.Emails) > 0 {
+		to = strings.Join(uj.Emails, ", ")
+	} else {
+		to = fmt.Sprintf("%s:%s", uj.StreamId, uj.TopicId)
+	}
+	log.Printf("Ran message job to %s\n", to)
 }
 
 type MessageJob struct {
@@ -106,6 +142,17 @@ func (cs *CronService) ScheduleJob(info *CronInfo) error {
 			TopicId:  info.TopicId,
 			Emails:   info.Emails,
 			Content:  info.Content,
+		}
+	case Update:
+		job = UpdateUrlJob{
+			Job: Job{
+				Bot: cs.Taavi.Bot,
+			},
+			StreamId: info.StreamId,
+			TopicId:  info.TopicId,
+			Emails:   info.Emails,
+			Content:  info.Content,
+			Url:      info.Url,
 		}
 	default:
 		return fmt.Errorf("unsupported job type")

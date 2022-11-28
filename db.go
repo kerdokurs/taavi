@@ -91,6 +91,7 @@ type CronType int
 
 const (
 	Message CronType = iota
+	Update  CronType = iota
 )
 
 type CronInfo struct {
@@ -102,8 +103,8 @@ type CronInfo struct {
 	StreamId string   `json:"stream_id" firestore:"stream_id"`
 	TopicId  string   `json:"topic_id" firestore:"topic_id"`
 	Emails   []string `json:"emails" firestore:"emails"` // Used for private messages
-
-	Content string `json:"content" firestore:"content"`
+	Url      string   `json:"url" firestore:"url"`       // Used for custom url jobs
+	Content  string   `json:"content" firestore:"content"`
 
 	Enabled bool `json:"enabled" firestore:"enabled"`
 

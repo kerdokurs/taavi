@@ -94,13 +94,9 @@ func CreateJob(job *data.Job) (cron.Job, string, error) {
 	return cronJob, cronTime, nil
 }
 
-func UnscheduleAll(ignoreMaster bool) {
+func UnscheduleAll() {
 	entryIDs := make([]cron.EntryID, 0)
 	for _, entry := range Scheduler.Entries() {
-		if ignoreMaster && entry.ID == 1 {
-			continue
-		}
-
 		entryIDs = append(entryIDs, entry.ID)
 	}
 
@@ -109,14 +105,9 @@ func UnscheduleAll(ignoreMaster bool) {
 	}
 }
 
-func RescheduleAll(ignoreMaster bool) {
-	logger.Infow("rescheduling jobs", logger.M{
-		"ignoreMaster": ignoreMaster,
-	})
+func RescheduleAll() {
+	logger.Infow("rescheduling jobs", nil)
 
-	UnscheduleAll(ignoreMaster)
-	if ignoreMaster {
-		ScheduleMaster()
-	}
+	UnscheduleAll()
 	ScheduleAll()
 }

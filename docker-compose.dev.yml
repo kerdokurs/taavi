@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  database:
+    image: timescale/timescaledb:latest-pg13
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_USER: taavi
+      POSTGRES_PASSWORD: TAAVI123
+    volumes:
+      - ./db-data:/var/lib/postgresql/data

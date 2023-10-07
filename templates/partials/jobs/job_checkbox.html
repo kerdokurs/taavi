@@ -1,0 +1,7 @@
+{{ define "JobCheckbox" }}
+
+<input type="checkbox" {{ if .Enabled }} checked {{ end }} hx-post="/api/jobs/{{.ID}}/toggle" hx-swap="outerHTML" />
+
+{{ end }}
+
+{{ template "JobCheckbox" . }}

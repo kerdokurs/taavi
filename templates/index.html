@@ -1,0 +1,49 @@
+<section id="jobs">
+  <h1>Taavi tööd</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Stream</th>
+        <th>Topic</th>
+        <th>Content</th>
+        <th>Enabled</th>
+        <th>Run now</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="jobs-list">
+      {{ range .jobs }}
+      {{ template "JobRow" . }}
+      {{ end }}
+    </tbody>
+  </table>
+
+  <h2>Lisa uus</h2>
+
+  <form hx-post="/api/jobs" hx-target="#jobs-list" hx-swap="beforeend" class="flex flex-col gap-4">
+    <select name="type" id="type">
+      <option value="SIMPLE">Tavaline</option>
+      <option value="RANDOM">Juhuslik</option>
+    </select>
+
+    <select name="stream_id" id="stream_id" required>
+      <option disabled selected>Vali stream</option>
+      {{ range .streams }}
+      <option value="{{ .Name }}">{{ .Name }}</option>
+      {{ end }}
+    </select>
+
+    <input type="text" name="topic_id" id="topic_id" placeholder="Topic" required>
+    <input type="text" name="cron_time" id="cron_time" placeholder="CRON time">
+
+    <textarea name="content" id="content" cols="30" rows="10" placeholder="Content" required></textarea>
+
+    <button type="submit">
+      Esita
+    </button>
+  </form>
+
+
+  <p id="action-status"></p>
+
+</section>

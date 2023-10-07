@@ -1,0 +1,18 @@
+{{ define "JobRow" }}
+<tr>
+  <td>{{ .StreamID }}</td>
+  <td>{{ .TopicID }}</td>
+  <td>{{ .Content }}</td>
+  <td>{{ template "JobCheckbox" . }}</td>
+  <td>
+    {{ if eq .Type "SIMPLE" }}
+    <button hx-post="/api/jobs/{{ .ID }}/run" hx-target="#action-status">X</button>
+    {{ end }}
+  </td>
+  <td>
+    <button hx-delete="/api/jobs/{{ .ID }}" hx-target="closest tr" hx-swap="outerHTML">X</button>
+  </td>
+</tr>
+{{ end }}
+
+{{ template "JobRow" . }}

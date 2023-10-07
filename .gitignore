@@ -17,7 +17,10 @@
 .env
 pkg/
 test.db
-.zuliprc
+.zuliprc*
 
 firebase_creds.json
 .vscode
+
+db-data/
+tmp/

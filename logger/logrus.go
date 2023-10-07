@@ -12,7 +12,7 @@ func Init() {
 	logrus.SetOutput(os.Stdout)
 	logrus.SetLevel(logrus.InfoLevel)
 
-	logStreamID = "TEAVITUSED (TEST)"
+	logStreamID = os.Getenv("LOGGING_STREAM")
 	externalLoggingEnabled = os.Getenv("LOGGING") == "true"
 }
 

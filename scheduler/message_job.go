@@ -28,8 +28,9 @@ func (m *MessageJob) Run() {
 	err := zulip.Client.Message(&msg)
 
 	executedJob := data.ExecutedJob{
-		RanAt: time.Now(),
-		JobID: m.JobID,
+		RanAt:   time.Now(),
+		JobID:   m.JobID,
+		Content: content,
 	}
 	defer func() {
 		data.DB.Create(&executedJob)

@@ -43,14 +43,15 @@ func ScheduleAll() {
 			break
 		}
 		logger.Infow("scheduled job", logger.M{
-			"id": id,
+			"id":        id,
+			"stream_id": job.StreamID,
+			"topic_id":  job.TopicID,
+			"cron_time": job.CronTime,
 		})
 	}
-
-	scheduleMasterJob()
 }
 
-func scheduleMasterJob() {
+func ScheduleMaster() {
 	var masterJob cron.Job = &MasterJob{}
 	_, err := Scheduler.AddJob(MasterJobCronTime, masterJob)
 	if err != nil {
@@ -91,4 +92,31 @@ func CreateJob(job *data.Job) (cron.Job, string, error) {
 	}
 
 	return cronJob, cronTime, nil
+}
+
+func UnscheduleAll(ignoreMaster bool) {
+	entryIDs := make([]cron.EntryID, 0)
+	for _, entry := range Scheduler.Entries() {
+		if ignoreMaster && entry.ID == 1 {
+			continue
+		}
+
+		entryIDs = append(entryIDs, entry.ID)
+	}
+
+	for _, entryID := range entryIDs {
+		Scheduler.Remove(entryID)
+	}
+}
+
+func RescheduleAll(ignoreMaster bool) {
+	logger.Infow("rescheduling jobs", logger.M{
+		"ignoreMaster": ignoreMaster,
+	})
+
+	UnscheduleAll(ignoreMaster)
+	if ignoreMaster {
+		ScheduleMaster()
+	}
+	ScheduleAll()
 }

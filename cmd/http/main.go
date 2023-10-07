@@ -18,6 +18,7 @@ func main() {
 	external.Init()
 
 	scheduler.Init()
+	scheduler.ScheduleMaster()
 	scheduler.ScheduleAll()
 
 	logger.Infow("starting Taavi", nil)

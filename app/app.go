@@ -13,6 +13,7 @@ func GetApp() *fiber.App {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
+	app.Static("/", "./public")
 
 	app.Use(middleware.Htmx())
 	app.Use(logger.New())

@@ -1,5 +1,5 @@
-<section id="jobs">
-  <h1>Taavi tööd</h1>
+<section id="jobs" class="mt-4">
+  <h1 class="text-center font-bold text-2xl mb-4">Taavi jobs</h1>
   <table>
     <thead>
       <tr>
@@ -18,16 +18,19 @@
     </tbody>
   </table>
 
-  <h2>Lisa uus</h2>
+  <button hx-post="/api/reschedule"
+    class="mt-4 border border-gray-700 rounded-md text-center px-6 py-3">Reschedule</button>
+
+  <h2 class="font-bold text-xl my-4">Add new</h2>
 
   <form hx-post="/api/jobs" hx-target="#jobs-list" hx-swap="beforeend" class="flex flex-col gap-4">
     <select name="type" id="type">
-      <option value="SIMPLE">Tavaline</option>
-      <option value="RANDOM">Juhuslik</option>
+      <option value="SIMPLE">Simple</option>
+      <option value="RANDOM" disabled>Random</option>
     </select>
 
     <select name="stream_id" id="stream_id" required>
-      <option disabled selected>Vali stream</option>
+      <option disabled selected>Stream</option>
       {{ range .streams }}
       <option value="{{ .Name }}">{{ .Name }}</option>
       {{ end }}
@@ -38,12 +41,9 @@
 
     <textarea name="content" id="content" cols="30" rows="10" placeholder="Content" required></textarea>
 
-    <button type="submit">
-      Esita
+    <button type="submit" class="mt-4 border border-gray-700 rounded-md text-center px-6 py-3">
+      Create
     </button>
   </form>
-
-
-  <p id="action-status"></p>
 
 </section>

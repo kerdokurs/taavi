@@ -109,5 +109,6 @@ func RescheduleAll() {
 	logger.Infow("rescheduling jobs", nil)
 
 	UnscheduleAll()
+	ScheduleMaster()
 	ScheduleAll()
 }

@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/template/html/v2"
 	"kerdo.dev/taavi/handlers"
@@ -17,6 +18,9 @@ func GetApp() *fiber.App {
 
 	app.Use(middleware.Htmx())
 	app.Use(logger.New())
+	app.Use(basicauth.New(basicauth.Config{
+		Users: loadAuthUsers(),
+	}))
 
 	handlers.Init(app)
 

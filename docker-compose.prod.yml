@@ -20,3 +20,5 @@ services:
       - .env
     depends_on:
       - database
+    volumes:
+      - ./users.ini:/app/users.ini

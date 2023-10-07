@@ -20,5 +20,6 @@ ENV ZONEINFO /zoneinfo.zip
 
 COPY --from=builder /app/taavi /app/taavi
 COPY --from=builder /app/templates /app/templates
+COPY --from=builder /app/public /app/public
 
 ENTRYPOINT [ "/app/taavi" ]

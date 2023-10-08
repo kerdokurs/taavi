@@ -40,11 +40,19 @@ func (m *MasterJob) scheduleRandomJobs() {
 
 		startMeta, err := data.GetJobMeta(&job, "begin")
 		if err != nil {
-			panic(err)
+			logger.Errorw("error getting begin meta for random job", logger.M{
+				"err": err.Error(),
+				"job": job,
+			})
+			continue
 		}
 		endMeta, err := data.GetJobMeta(&job, "end")
 		if err != nil {
-			panic(err)
+			logger.Errorw("error getting end meta for random job", logger.M{
+				"err": err.Error(),
+				"job": job,
+			})
+			continue
 		}
 
 		timeParts := parseStartEnd(startMeta.Value, endMeta.Value)
@@ -52,11 +60,18 @@ func (m *MasterJob) scheduleRandomJobs() {
 		rndMin := rand.Intn(6) * 10
 		cronTime := fmt.Sprintf("%d %d * * *", rndMin, rndHour)
 
-		_, err = Scheduler.AddJob(cronTime, cronJob)
+		id, err := Scheduler.AddJob(cronTime, cronJob)
 		if err != nil {
 			logger.Errorw("error scheduling random job", logger.M{
 				"err": err.Error(),
 			})
+			continue
 		}
+		logger.Infow("scheduled random job", logger.M{
+			"id":        id,
+			"stream_id": job.StreamID,
+			"topic_id":  job.TopicID,
+			"cron_time": cronTime,
+		})
 	}
 }

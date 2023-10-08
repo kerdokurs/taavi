@@ -49,7 +49,7 @@ func (m *MasterJob) scheduleRandomJobs() {
 
 		timeParts := parseStartEnd(startMeta.Value, endMeta.Value)
 		rndHour := rand.Intn(timeParts[2]-timeParts[0]) + timeParts[0]
-		rndMin := (rand.Intn(6) + 1) * 10
+		rndMin := rand.Intn(6) * 10
 		cronTime := fmt.Sprintf("%d %d * * *", rndMin, rndHour)
 
 		_, err = Scheduler.AddJob(cronTime, cronJob)

@@ -19,7 +19,7 @@ func Init() {
 	sleepQuotesURL = os.Getenv("SLEEP_URL")
 
 	// ChatGPT
-	dailyTaskListPrompt = os.Getenv("DAILY_DASKLIST_PROMPT")
+	dailyTaskListPrompt = os.Getenv("DAILY_TASKLIST_PROMPT")
 }
 
 func DoRequest[Req any, Res any](ctx context.Context, method string, url string, data *Req) (*Res, error) {

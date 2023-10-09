@@ -17,6 +17,7 @@ const requestTimeout = time.Second * 10
 func Init() {
 	meditationQuotesURL = os.Getenv("MEDITATION_URL")
 	sleepQuotesURL = os.Getenv("SLEEP_URL")
+	sportQuotesURL = os.Getenv("SPORT_URL")
 
 	// ChatGPT
 	dailyTaskListPrompt = os.Getenv("DAILY_TASKLIST_PROMPT")

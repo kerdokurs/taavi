@@ -14,6 +14,7 @@ type GetVariable func(ctx context.Context) (string, error)
 var variableTable = map[string]GetVariable{
 	"meditation_quote": external.GetMeditationQuote,
 	"sleep_quote":      external.GetSleepQuote,
+	"sport_quote":      external.GetSportQuote,
 	"daily_tasks":      external.GetDailyTaskList,
 	"why_library":      external.GetLibraryMessage,
 }

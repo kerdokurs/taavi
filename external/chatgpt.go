@@ -2,7 +2,6 @@ package external
 
 import (
 	"context"
-	"math/rand"
 	"os"
 	"time"
 
@@ -52,9 +51,10 @@ func GetDailyTaskList(ctx context.Context) (string, error) {
 var libraryPrompts = []string{
 	"Anna mulle üks põhjus, miks peaksin täna raamatukokku minema? Kirjuta lühidalt ja anna ainult põhjus. Alusta lause \"Peaksid täna minema raamatukokku\". Ole loominguline",
 	"Räägi mulle üks lühike anekdoot raamatukogu kohta. Anna ainult anekdoot, muud mitte",
+	"Ma tahan raamatukogus õppida, aga ma ei viitsi sinna kunagi minna. Palun ütle üks inspireeriv lause, et ma tahaksin raamatukokku minna",
 }
 
 func GetLibraryMessage(ctx context.Context) (string, error) {
-	prompt := libraryPrompts[rand.Intn(len(libraryPrompts))]
+	prompt := libraryPrompts[2]
 	return MakeChatGPTRequest(ctx, prompt)
 }

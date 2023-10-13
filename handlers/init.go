@@ -13,6 +13,7 @@ func Init(app *fiber.App) {
 	app.Post("/api/jobs/:id/run", HandleJobRun)
 
 	app.Get("/api/scheduled", HandleScheduledGet)
+	app.Post("/api/scheduled/:id/run", HandleScheduledRun)
 	app.Post("/api/reschedule", HandleReschedulePost)
 
 	app.Get("/", HandleIndex)

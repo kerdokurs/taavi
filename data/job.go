@@ -46,7 +46,7 @@ func GetJobs() ([]Job, error) {
 
 func GetRandomJobs() ([]Job, error) {
 	var jobs []Job
-	return jobs, DB.Model(Job{}).Preload("Meta").Find(&jobs, "type = 'RANDOM'").Error
+	return jobs, DB.Model(Job{}).Preload("Meta").Find(&jobs, "type = 'RANDOM' AND enabled = true").Error
 }
 
 func GetJobMeta(job *Job, key string) (JobMeta, error) {

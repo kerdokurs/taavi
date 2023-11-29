@@ -10,3 +10,9 @@ type JobMeta struct {
 
 	JobID int `json:"-"`
 }
+
+func GetMetas(jobID int) ([]JobMeta, error) {
+	var meta []JobMeta
+
+	return meta, DB.Model(JobMeta{}).Find(&meta, "job_id = ?", jobID).Error
+}

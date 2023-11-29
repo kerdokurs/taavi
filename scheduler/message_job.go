@@ -18,14 +18,24 @@ type MessageJob struct {
 }
 
 func (m *MessageJob) Run() {
-	content := replaceVariables(context.Background(), m.Content)
+	ctx := context.Background()
+
+	meta, err := data.GetMetas(m.JobID)
+	if err != nil {
+		panic(err)
+	}
+	for _, mt := range meta {
+		ctx = context.WithValue(ctx, mt.Key, mt.Value)
+	}
+
+	content := replaceVariables(ctx, m.Content)
 
 	msg := zlp.Message{
 		Stream:  m.StreamID,
 		Topic:   m.TopicID,
 		Content: content,
 	}
-	err := zulip.Client.Message(&msg)
+	err = zulip.Client.Message(&msg)
 
 	executedJob := data.ExecutedJob{
 		RanAt:   time.Now(),

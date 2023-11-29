@@ -7,6 +7,7 @@ import (
 
 	"kerdo.dev/taavi/external"
 	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/scheduler/variables"
 )
 
 type GetVariable func(ctx context.Context) (string, error)
@@ -17,6 +18,7 @@ var variableTable = map[string]GetVariable{
 	"sport_quote":      external.GetSportQuote,
 	"daily_tasks":      external.GetDailyTaskList,
 	"why_library":      external.GetLibraryMessage,
+	"date":             variables.GetDate,
 }
 
 var variableRegex = regexp.MustCompile(`\{(?P<VariableName>[\w_-]+)\}`)

@@ -25,3 +25,5 @@ firebase_creds.json
 
 db-data/
 tmp/
+.DS_Store
+.fleet/

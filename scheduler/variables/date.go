@@ -8,7 +8,6 @@ import (
 	"gitlab.com/metakeule/fmtdate"
 )
 
-// For custom formatting check https://stackoverflow.com/a/20234207
 const defaultFormat = "DD/MM/YYYY hh:mm:ss"
 
 const DateFormatKey = "date_format"

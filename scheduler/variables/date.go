@@ -2,7 +2,6 @@ package variables
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"gitlab.com/metakeule/fmtdate"
@@ -15,7 +14,6 @@ const DateFormatKey = "date_format"
 func GetDate(ctx context.Context) (string, error) {
 	format := func() string {
 		fmtAny := ctx.Value(DateFormatKey)
-		fmt.Println(fmtAny)
 		if fmtAny == nil {
 			return defaultFormat
 		}

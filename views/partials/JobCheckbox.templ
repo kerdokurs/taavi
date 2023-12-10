@@ -1,0 +1,13 @@
+package partials
+
+import "kerdo.dev/taavi/data"
+import "fmt"
+
+templ JobCheckbox(job *data.Job) {
+	<input
+ 		type="checkbox"
+ 		checked?={ job.Enabled }
+ 		hx-post={ fmt.Sprintf("/api/jobs/%d/toggle", job.ID) }
+ 		hx-swap="outerHTML"
+	/>
+}

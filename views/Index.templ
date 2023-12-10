@@ -1,0 +1,68 @@
+package views
+
+import "kerdo.dev/taavi/data"
+import "github.com/kerdokurs/zlp"
+import "kerdo.dev/taavi/views/partials"
+
+templ Index(jobs []data.Job, streams []zlp.Stream) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="stylesheet" href="/style.css"/>
+			<title>Taavi</title>
+		</head>
+		<body>
+			<main class="flex flex-row justify-center">
+				<section id="jobs" class="mt-4">
+					<h1 class="text-center font-bold text-2xl mb-4">Taavi jobs</h1>
+					<table>
+						<thead>
+							<tr>
+								<th>Stream</th>
+								<th>Topic</th>
+								<th>Content</th>
+								<th>Enabled</th>
+								<th>Run now</th>
+								<th>Delete</th>
+							</tr>
+						</thead>
+						<tbody id="jobs-list">
+							for _, job := range jobs {
+								@partials.JobRow(&job)
+							}
+						</tbody>
+					</table>
+					<button
+ 						hx-post="/api/reschedule"
+ 						class="mt-4 border border-gray-700 rounded-md text-center px-6 py-3"
+					>
+						Reschedule
+					</button>
+					<h2 class="font-bold text-xl my-4">Add new</h2>
+					<form hx-post="/api/jobs" hx-target="#jobs-list" hx-swap="beforeend" class="flex flex-col gap-4">
+						<select name="type" id="type">
+							<option value="SIMPLE">Simple</option>
+							<option value="RANDOM" disabled>Random</option>
+						</select>
+						<select name="stream_id" id="stream_id" required>
+							<option disabled selected>Stream</option>
+							for _, stream := range streams {
+								<option value={ stream.Name }>{ stream.Name }</option>
+							}
+						</select>
+						<input type="text" name="topic_id" id="topic_id" placeholder="Topic" required/>
+						<input type="text" name="cron_time" id="cron_time" placeholder="CRON time"/>
+						<textarea name="content" id="content" cols="30" rows="10" placeholder="Content" required></textarea>
+						<button type="submit" class="mt-4 border border-gray-700 rounded-md text-center px-6 py-3">
+							Create
+						</button>
+					</form>
+					<p id="action-status"></p>
+				</section>
+			</main>
+			<script src="https://unpkg.com/htmx.org@1.9.6"></script>
+		</body>
+	</html>
+}

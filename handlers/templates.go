@@ -5,6 +5,7 @@ import (
 	"github.com/kerdokurs/zlp"
 	"kerdo.dev/taavi/data"
 	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/views"
 	"kerdo.dev/taavi/zulip"
 )
 
@@ -24,8 +25,7 @@ func HandleIndex(c *fiber.Ctx) error {
 		streams = []zlp.Stream{}
 	}
 
-	return c.Render("index", map[string]any{
-		"jobs":    jobs,
-		"streams": streams,
-	}, "layouts/main")
+	comp := views.Index(jobs, streams)
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return comp.Render(c.Context(), c.Response().BodyWriter())
 }

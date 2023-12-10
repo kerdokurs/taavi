@@ -8,6 +8,7 @@ import (
 	"kerdo.dev/taavi/data"
 	"kerdo.dev/taavi/logger"
 	"kerdo.dev/taavi/scheduler"
+	"kerdo.dev/taavi/views/partials"
 )
 
 func HandleJobsGet(c *fiber.Ctx) error {
@@ -88,7 +89,8 @@ func HandleJobsPost(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.Render("partials/jobs/job_row", job)
+	c.Response().Header.Set("Content-Type", "text/html; charset=utf-8")
+	return partials.JobRow(&job).Render(c.Context(), c.Response().BodyWriter())
 }
 
 func HandleJobsDelete(c *fiber.Ctx) error {
@@ -162,8 +164,11 @@ func HandleJobEnabledToggle(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(newState)
 	}
 
-	return c.Render("partials/jobs/job_checkbox", map[string]any{
-		"ID":      jobID,
-		"Enabled": newState,
-	})
+	job := data.Job{
+		Model: gorm.Model{
+			ID: uint(jobID),
+		},
+		Enabled: newState,
+	}
+	return partials.JobCheckbox(&job).Render(c.Context(), c.Response().BodyWriter())
 }

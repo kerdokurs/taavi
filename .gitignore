@@ -27,3 +27,5 @@ db-data/
 tmp/
 .DS_Store
 .fleet/
+
+*_templ.go

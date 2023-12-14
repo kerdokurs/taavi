@@ -1,7 +1,6 @@
 package zulip
 
 import (
-	"log"
 	"os"
 
 	"github.com/kerdokurs/zlp"
@@ -10,19 +9,15 @@ import (
 var Client *zlp.Bot
 
 func Init() {
-	var rc *zlp.ZulipRC
-	var err error
+    cfgs := []zlp.ConfigFunction{nil}
+
+    if os.Getenv("TAAVI_ENV") == "dev" {
+    }
 
 	if os.Getenv("TAAVI_ENV") == "dev" {
-		rc, err = zlp.LoadRC(".zuliprc")
-		if err != nil {
-			log.Fatalf("could not parse Zulip configuration")
-		}
+        cfgs[0] = zlp.WithRCFile(".zuliprc")
 	} else {
-		if rc, err = zlp.RCFromEnv(); err != nil {
-			log.Fatalf("could not parse Zulip configuration from env")
-		}
+        cfgs[0] = zlp.WithRCEnv()
 	}
-	Client = zlp.NewBot(rc)
-	Client.Init()
+	Client = zlp.NewBot(cfgs...)
 }

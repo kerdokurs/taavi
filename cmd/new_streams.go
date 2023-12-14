@@ -2,11 +2,15 @@ package main
 
 import (
 	"encoding/csv"
-	"golang.org/x/exp/maps"
 	"log"
 	"math/rand"
 	"os"
 	"time"
+
+	"golang.org/x/exp/maps"
+	"kerdo.dev/taavi/app"
+	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/zulip"
 )
 
 type Team struct {
@@ -87,13 +91,19 @@ func RandomName(n int) string {
 	return string(name)
 }
 
-/*
-creates streams from list
-!! if one email is invalid, then entire stream is EMPTY !!
-*/
-func (t *Taavi) NewStreams(teams []Team) {
+const tudengiteFail = "tudengid.csv"
+
+func main() {
+	app.InitEnv()
+	logger.Init()
+
+	zulip.Init()
+
+	logger.Infow("running new_streams", nil)
+
+	teams := getTeamsFromFile(tudengiteFail)
 	for _, team := range teams {
-		t.Bot.CreateStream(team.name, team.desc, true, team.emails)
+		zulip.Client.CreateStream(team.name, team.desc, true, team.emails)
 		time.Sleep(time.Millisecond * 10)
 	}
 }

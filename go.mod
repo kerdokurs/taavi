@@ -3,6 +3,7 @@ module kerdo.dev/taavi
 go 1.20
 
 require (
+	github.com/a-h/templ v0.2.476
 	github.com/go-ini/ini v1.67.0
 	github.com/gofiber/fiber/v2 v2.49.2
 	github.com/gofiber/template/html/v2 v2.0.5
@@ -11,12 +12,13 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.15.4
 	github.com/sirupsen/logrus v1.9.3
+	gitlab.com/metakeule/fmtdate v1.2.2
+	golang.org/x/exp v0.0.0-20231206192017-f3f8817b8deb
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/gorm v1.25.4
 )
 
 require (
-	github.com/a-h/templ v0.2.476 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/gofiber/template v1.8.2 // indirect
 	github.com/gofiber/utils v1.1.0 // indirect
@@ -34,7 +36,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.50.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	gitlab.com/metakeule/fmtdate v1.2.2 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect

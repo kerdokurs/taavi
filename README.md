@@ -4,5 +4,5 @@ Tiiger Taavi
 
 ## Commands
 
-1. Scheduler & HTTP API – `make run` or `make run cmd/http/main.go`.
+1. Scheduler & HTTP API – `make run` or `go run cmd/http/main.go`.
 2. New Streams – `make run cmd/new_streams.go`.

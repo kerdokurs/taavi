@@ -17,7 +17,15 @@
 .env
 pkg/
 test.db
-.zuliprc
+.zuliprc*
+users.ini
 
 firebase_creds.json
 .vscode
+
+db-data/
+tmp/
+.DS_Store
+.fleet/
+
+*_templ.go

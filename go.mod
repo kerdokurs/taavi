@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.49.2
 	github.com/gofiber/template/html/v2 v2.0.5
 	github.com/joho/godotenv v1.5.1
-	github.com/kerdokurs/zlp v0.1.0
+	github.com/kerdokurs/zlp v0.1.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.15.4
 	github.com/sirupsen/logrus v1.9.3

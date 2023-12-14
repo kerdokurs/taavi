@@ -9,15 +9,15 @@ import (
 var Client *zlp.Bot
 
 func Init() {
-    cfgs := []zlp.ConfigFunction{nil}
-
-    if os.Getenv("TAAVI_ENV") == "dev" {
+    cfgs := []zlp.ConfigFunction{
+        zlp.WithUserAgent("Taavi/2.0"),
+        nil,
     }
 
 	if os.Getenv("TAAVI_ENV") == "dev" {
-        cfgs[0] = zlp.WithRCFile(".zuliprc")
+        cfgs[1] = zlp.WithRCFile(".zuliprc")
 	} else {
-        cfgs[0] = zlp.WithRCEnv()
+        cfgs[1] = zlp.WithRCEnv()
 	}
 	Client = zlp.NewBot(cfgs...)
 }

@@ -6,8 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -17,6 +15,15 @@ type Team struct {
 	desc   string
 	emails []string
 }
+
+/*
+csv file
+first row is column names
+columns for teamname and email can be mapped in function
+iterates over each line and groups together emails with same team name
+(emails should be Zulip emails, (hopefully UT emails), can be fetched with bot.GetUsers())
+returns list of teams that is suitable for bot.NewStreams()
+*/
 
 func getTeamsFromFile(fileName string) []Team {
 	f, err := os.Open(fileName)
@@ -37,26 +44,25 @@ func getTeamsFromFile(fileName string) []Team {
 		log.Fatal(err)
 	}
 
-	teamMap := make(map[int64]Team)
+	teamMap := make(map[string]Team)
 
 	for i, line := range data {
 		if i > 0 {
-			teamField := line[5]
-			email := line[7]
-			idStr := strings.Split(teamField, " ")[1]
-			idInt, err := strconv.ParseInt(string(idStr), 0, 8)
+			// set appropriate column numbers
+			teamName := line[2]
+			email := line[3]
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			currentTeam, present := teamMap[idInt]
+			currentTeam, present := teamMap[teamName]
 			if present == true {
 				currentTeam.emails = append(currentTeam.emails, email)
-				teamMap[idInt] = currentTeam
+				teamMap[teamName] = currentTeam
 			} else {
-				teamMap[idInt] = Team{
-					id:     idInt,
-					name:   RandomName(5),
+				teamMap[teamName] = Team{
+					id:     int64(i),
+					name:   teamName,
 					desc:   "Suvalise nimega striim veebilehe rühmatööks. Oma rühmaliikmete nägemiseks vajuta rühma nime kõrval olevat ikooni. Kui vajad abi, siis küsi oma seminarirühma juhendajalt.",
 					emails: []string{email},
 				}
@@ -69,6 +75,9 @@ func getTeamsFromFile(fileName string) []Team {
 	return maps.Values(teamMap)
 }
 
+/*
+generates random string with given length
+*/
 func RandomName(n int) string {
 	var letterRunes = []rune("abdefghijklmnoprstuvöäüõABDEFGHIJKLMNOPRSTUVÖÄÜÕ0123456789")
 	name := make([]rune, n)
@@ -78,6 +87,10 @@ func RandomName(n int) string {
 	return string(name)
 }
 
+/*
+creates streams from list
+!! if one email is invalid, then entire stream is EMPTY !!
+*/
 func (t *Taavi) NewStreams(teams []Team) {
 	for _, team := range teams {
 		t.Bot.CreateStream(team.name, team.desc, true, team.emails)

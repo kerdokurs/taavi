@@ -27,3 +27,4 @@ tmp/
 .fleet/
 
 *_templ.go
+taavi.db

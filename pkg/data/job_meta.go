@@ -108,3 +108,18 @@ func InsertJobMetasTx(ctx context.Context, tx *sqlx.Tx, metas []JobMeta) error {
 
 	return nil
 }
+
+func DeleteJobMeta(ctx context.Context, jobID, metaID uint) error {
+	query := `
+		UPDATE job_meta
+		SET deleted_at = date('now')
+		WHERE
+			job_id = $1
+			AND id = $2
+	`
+	if _, err := db.ExecContext(ctx, query, jobID, metaID); err != nil {
+		return err
+	}
+
+	return nil
+}

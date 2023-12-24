@@ -21,7 +21,7 @@ templ JobMetaList(jobID uint, meta []data.JobMeta) {
 						<td>{ m.Key }</td>
 						<td>{ m.Value }</td>
 						<td><a href={ "" }>Update</a></td>
-						<td><a hx-delete={ fmt.Sprintf("/api/jobs/%d/meta/%d", jobID, m.ID) }>Delete</a></td>
+						<td><a hx-delete={ fmt.Sprintf("/api/jobs/%d/meta/%d", jobID, m.ID) } hx-target="closest tr" hx-swap="outerHTML">Delete</a></td>
 					</tr>
 				}
 			</tbody>

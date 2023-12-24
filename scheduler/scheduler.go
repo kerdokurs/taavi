@@ -1,13 +1,14 @@
 package scheduler
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
 
 	"github.com/robfig/cron/v3"
-	"kerdo.dev/taavi/data"
 	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/data"
 )
 
 var Scheduler *cron.Cron
@@ -25,7 +26,8 @@ func Init() {
 }
 
 func ScheduleAll() {
-	jobs, err := data.GetJobs()
+	ctx := context.TODO()
+	jobs, err := data.GetJobs(ctx)
 	if err != nil {
 		logger.Errorw("error getting jobs for scheduling", logger.M{
 			"err": err.Error(),

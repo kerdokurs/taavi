@@ -15,12 +15,10 @@
 # vendor/
 
 .env
-pkg/
 test.db
 .zuliprc*
 users.ini
 
-firebase_creds.json
 .vscode
 
 db-data/

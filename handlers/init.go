@@ -11,6 +11,7 @@ func Init(app *fiber.App) {
 	app.Post("/api/jobs/:id/toggle", HandleJobEnabledToggle)
 
 	app.Post("/api/jobs/:id/run", HandleJobRun)
+	app.Get("/api/jobs/:id/meta", HandleJobMetaGet)
 
 	app.Get("/api/scheduled", HandleScheduledGet)
 	app.Post("/api/scheduled/:id/run", HandleScheduledRun)

@@ -1,15 +1,18 @@
 package partials
 
-import "kerdo.dev/taavi/data"
+import "kerdo.dev/taavi/pkg/data"
 import "fmt"
 
 templ JobRow(job *data.Job) {
-	<tr>
+	<tr id={ fmt.Sprintf("job-%d", job.ID) }>
 		<td>{ job.StreamID }</td>
 		<td>{ job.TopicID }</td>
 		<td>{ job.Content }</td>
 		<td>
 			@JobCheckbox(job)
+		</td>
+		<td>
+			<button hx-get={ fmt.Sprintf("/api/jobs/%d/meta", job.ID) } hx-target={ fmt.Sprintf("#job-%d-meta", job.ID) } hx-swap="innerHTML">X</button>
 		</td>
 		<td>
 			if job.Type == "SIMPLE" {
@@ -19,5 +22,8 @@ templ JobRow(job *data.Job) {
 		<td>
 			<button hx-delete={ fmt.Sprintf("/api/jobs/%d", job.ID) } hx-target="closest tr" hx-swap="outerHTML">X</button>
 		</td>
+	</tr>
+	<tr>
+		<td colspan="6" id={ fmt.Sprintf("job-%d-meta", job.ID) }></td>
 	</tr>
 }

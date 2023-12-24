@@ -1,0 +1,30 @@
+package partials
+
+import "kerdo.dev/taavi/pkg/data"
+import "fmt"
+
+templ JobMetaList(jobID uint, meta []data.JobMeta) {
+	<div>
+		<h3>Job meta</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>Key</th>
+					<th>Value</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, m := range meta {
+					<tr>
+						<td>{ m.Key }</td>
+						<td>{ m.Value }</td>
+						<td><a href={ "" }>Update</a></td>
+						<td><a hx-delete={ fmt.Sprintf("/api/jobs/%d/meta/%d", jobID, m.ID) }>Delete</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}

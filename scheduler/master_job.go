@@ -1,12 +1,13 @@
 package scheduler
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 
 	"github.com/robfig/cron/v3"
-	"kerdo.dev/taavi/data"
 	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/data"
 )
 
 const MasterJobCronTime = "0 8 * * *"
@@ -22,7 +23,8 @@ func (m *MasterJob) Run() {
 }
 
 func (m *MasterJob) scheduleRandomJobs() {
-	randomJobs, err := data.GetRandomJobs()
+	ctx := context.TODO()
+	randomJobs, err := data.GetRandomJobs(ctx)
 	if err != nil {
 		logger.Errorw("error getting random jobs", logger.M{
 			"err": err.Error(),
@@ -38,7 +40,7 @@ func (m *MasterJob) scheduleRandomJobs() {
 			Content:  job.Content,
 		}
 
-		startMeta, err := data.GetJobMeta(&job, "begin")
+		startMeta, err := data.GetJobMeta(ctx, &job, "begin")
 		if err != nil {
 			logger.Errorw("error getting begin meta for random job", logger.M{
 				"err": err.Error(),
@@ -46,7 +48,7 @@ func (m *MasterJob) scheduleRandomJobs() {
 			})
 			continue
 		}
-		endMeta, err := data.GetJobMeta(&job, "end")
+		endMeta, err := data.GetJobMeta(ctx, &job, "end")
 		if err != nil {
 			logger.Errorw("error getting end meta for random job", logger.M{
 				"err": err.Error(),

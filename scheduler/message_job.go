@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/kerdokurs/zlp"
-	"kerdo.dev/taavi/data"
 	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/data"
 	"kerdo.dev/taavi/zulip"
 )
 
@@ -20,7 +20,7 @@ type MessageJob struct {
 func (m *MessageJob) Run() {
 	ctx := context.Background()
 
-	meta, err := data.GetMetas(m.JobID)
+	meta, err := data.GetJobMetas(ctx, uint(m.JobID))
 	if err != nil {
 		panic(err)
 	}
@@ -39,12 +39,13 @@ func (m *MessageJob) Run() {
 
 	executedJob := data.ExecutedJob{
 		RanAt:   time.Now(),
-		JobID:   m.JobID,
+		JobID:   uint(m.JobID),
 		Content: content,
 	}
-	defer func() {
-		data.DB.Create(&executedJob)
-	}()
+	defer func(executedJob data.ExecutedJob) {
+		ctx := context.TODO()
+		data.InsertExecutedJob(ctx, executedJob)
+	}(executedJob)
 
 	if err != nil {
 		logger.Errorw("error sending message", logger.M{

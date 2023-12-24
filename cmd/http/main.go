@@ -2,9 +2,9 @@ package main
 
 import (
 	"kerdo.dev/taavi/app"
-	"kerdo.dev/taavi/data"
 	"kerdo.dev/taavi/external"
 	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/data"
 	"kerdo.dev/taavi/scheduler"
 	"kerdo.dev/taavi/zulip"
 )

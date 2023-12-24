@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/go-ini/ini"
-	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/logger"
 )
 
 func loadAuthUsers() map[string]string {

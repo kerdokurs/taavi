@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/robfig/cron/v3"
-	"kerdo.dev/taavi/logger"
 	"kerdo.dev/taavi/pkg/data"
+	"kerdo.dev/taavi/pkg/logger"
 )
 
 var Scheduler *cron.Cron

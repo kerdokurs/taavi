@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/logger"
 )
 
 // ab:cd, ef:gh -> [ab, cd, ef, gh]

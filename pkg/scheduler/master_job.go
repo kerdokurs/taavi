@@ -6,8 +6,8 @@ import (
 	"math/rand"
 
 	"github.com/robfig/cron/v3"
-	"kerdo.dev/taavi/logger"
 	"kerdo.dev/taavi/pkg/data"
+	"kerdo.dev/taavi/pkg/logger"
 )
 
 const MasterJobCronTime = "0 8 * * *"

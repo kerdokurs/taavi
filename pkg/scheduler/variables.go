@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strings"
 
-	"kerdo.dev/taavi/external"
-	"kerdo.dev/taavi/logger"
-	"kerdo.dev/taavi/scheduler/variables"
+	"kerdo.dev/taavi/pkg/external"
+	"kerdo.dev/taavi/pkg/logger"
+	"kerdo.dev/taavi/pkg/scheduler/variables"
 )
 
 type GetVariable func(ctx context.Context) (string, error)

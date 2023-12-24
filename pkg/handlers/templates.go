@@ -3,10 +3,10 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kerdokurs/zlp"
-	"kerdo.dev/taavi/logger"
 	"kerdo.dev/taavi/pkg/data"
+	"kerdo.dev/taavi/pkg/logger"
+	"kerdo.dev/taavi/pkg/zulip"
 	"kerdo.dev/taavi/views"
-	"kerdo.dev/taavi/zulip"
 )
 
 func HandleIndex(c *fiber.Ctx) error {

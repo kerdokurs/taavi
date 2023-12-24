@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/robfig/cron/v3"
-	"kerdo.dev/taavi/scheduler"
+	"kerdo.dev/taavi/pkg/scheduler"
 )
 
 func HandleScheduledGet(c *fiber.Ctx) error {

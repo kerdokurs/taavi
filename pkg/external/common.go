@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/logger"
 )
 
 const requestTimeout = time.Second * 10

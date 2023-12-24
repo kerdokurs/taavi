@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"golang.org/x/exp/maps"
-	"kerdo.dev/taavi/app"
-	"kerdo.dev/taavi/logger"
-	"kerdo.dev/taavi/zulip"
+	"kerdo.dev/taavi/pkg/app"
+	"kerdo.dev/taavi/pkg/logger"
+	"kerdo.dev/taavi/pkg/zulip"
 )
 
 type Team struct {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"kerdo.dev/taavi/logger"
 	"kerdo.dev/taavi/pkg/data"
-	"kerdo.dev/taavi/scheduler"
+	"kerdo.dev/taavi/pkg/logger"
+	"kerdo.dev/taavi/pkg/scheduler"
 	"kerdo.dev/taavi/views/partials"
 )
 

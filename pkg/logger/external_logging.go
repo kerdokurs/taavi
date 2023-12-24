@@ -8,7 +8,7 @@ import (
 
 	"github.com/kerdokurs/zlp"
 	"github.com/sirupsen/logrus"
-	"kerdo.dev/taavi/zulip"
+	"kerdo.dev/taavi/pkg/zulip"
 )
 
 var logStreamID string

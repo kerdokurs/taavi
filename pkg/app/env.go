@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"kerdo.dev/taavi/logger"
+	"kerdo.dev/taavi/pkg/logger"
 )
 
 func InitEnv() {

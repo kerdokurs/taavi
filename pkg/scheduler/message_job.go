@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/kerdokurs/zlp"
-	"kerdo.dev/taavi/logger"
 	"kerdo.dev/taavi/pkg/data"
-	"kerdo.dev/taavi/zulip"
+	"kerdo.dev/taavi/pkg/logger"
+	"kerdo.dev/taavi/pkg/zulip"
 )
 
 type MessageJob struct {

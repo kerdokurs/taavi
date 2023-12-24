@@ -4,8 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"kerdo.dev/taavi/handlers"
-	"kerdo.dev/taavi/middleware"
+	"kerdo.dev/taavi/pkg/handlers"
+	"kerdo.dev/taavi/pkg/middleware"
 )
 
 func GetApp() *fiber.App {
